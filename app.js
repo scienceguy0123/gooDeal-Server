@@ -27,6 +27,7 @@ connect.then((db) => {
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+let itemsRouter = require('./routes/items');
 
 var app = express();
 
@@ -55,25 +56,26 @@ app.use(passport.session());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/items', itemsRouter);
 
 
 
 
 
-function auth (req, res, next) {
-  console.log(req.user);
+// function auth (req, res, next) {
+//   console.log(req.user);
 
-  if (!req.user) {
-    var err = new Error('You are not authenticated!');
-    err.status = 403;
-    next(err);
-  }
-  else {
-        next();
-  }
-}
+//   if (!req.user) {
+//     var err = new Error('You are not authenticated!');
+//     err.status = 403;
+//     next(err);
+//   }
+//   else {
+//         next();
+//   }
+// }
 
-app.use(auth)
+// app.use(auth)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
