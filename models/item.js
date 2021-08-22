@@ -31,6 +31,8 @@ const Item = new Schema({
     //     type:mongoose.Schema.Types.ObjectId,
     //     ref:'Users'
     // }
+}, {
+    timestamps:true
 })
 
 let Items = mongoose.model('Item', Item)
