@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const authenticate = require('./authenticate');
 var config = require('./config');
+var bodyParser = require('body-parser')
 
 
 
@@ -28,8 +29,10 @@ connect.then((db) => {
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 let itemsRouter = require('./routes/items');
+let imageUploadRouter = require('./routes/imageUpload')
 
 var app = express();
+app.use(bodyParser.json({ limit: '50mb' }))
 
 // Secure traffic only
 app.all('*', (req, res, next) => {
@@ -51,12 +54,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/items', itemsRouter);
+// app.use('/imageUpload', imageUploadRouter);
 
 
 

@@ -27,6 +27,11 @@ const Item = new Schema({
         require:true
     },
 
+    Images: {
+        type: Array,
+        require: true
+    }
+
     // SellerId: {
     //     type:mongoose.Schema.Types.ObjectId,
     //     ref:'Users'
