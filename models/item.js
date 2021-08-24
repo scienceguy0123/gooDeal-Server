@@ -17,6 +17,11 @@ const Item = new Schema({
         require:true
     },
 
+    ItemPrice: {
+        type: Number,
+        require:true
+    },
+
     ItemDescription: {
         type:String,
         require:true
