@@ -19,5 +19,17 @@ itemRouter.post('/', cors.corsWithOptions, (req, res, next) => {
     .catch((err) => next(err));
 })
 
+itemRouter.get('/', cors.corsWithOptions, (req, res, next) => {
+    // res.end('Will send all the dishes to you');
+    Items.find({})
+    .populate('comments.author')
+    .then((items) => {
+        res.StatusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(items);
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+
 
 module.exports = itemRouter;
