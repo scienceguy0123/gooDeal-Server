@@ -29,7 +29,7 @@ connect.then((db) => {
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 let itemsRouter = require('./routes/items');
-let imageUploadRouter = require('./routes/imageUpload')
+let itemRouter = require('./routes/item');
 
 var app = express();
 app.use(bodyParser.json({ limit: '50mb' }))
@@ -63,6 +63,7 @@ app.use('/users', usersRouter);
 app.use('/items', itemsRouter);
 // app.use('/imageUpload', imageUploadRouter);
 
+app.use('/item', itemRouter);
 
 
 
