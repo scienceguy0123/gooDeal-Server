@@ -21,7 +21,18 @@ itemRouter.post('/', cors.corsWithOptions, (req, res, next) => {
 
 itemRouter.get('/', cors.corsWithOptions, (req, res, next) => {
     // res.end('Will send all the dishes to you');
-    Items.find({}).sort({'createdAt': 'desc'})    
+    Items.find({}).sort({'createdAt': 'desc'})   
+    .then((items) => {
+        res.StatusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(items);
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+
+itemRouter.get('/clothes', cors.corsWithOptions, (req, res, next) => {
+    // res.end('Will send all the dishes to you');
+    Items.find({ $or:[ {"ItemType1": "Cloth"}, {"ItemType2": "Cloth"}]}).sort({'createdAt': 'desc'})  
     .then((items) => {
         res.StatusCode = 200;
         res.setHeader('Content-Type', 'application/json');
