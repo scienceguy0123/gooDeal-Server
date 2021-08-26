@@ -21,7 +21,29 @@ itemRouter.post('/', cors.corsWithOptions, (req, res, next) => {
 
 itemRouter.get('/', cors.corsWithOptions, (req, res, next) => {
     // res.end('Will send all the dishes to you');
-    Items.find({}).sort({'createdAt': 'desc'})   
+    Items.find({}).sort({'createdAt': 'desc'})
+    .then((items) => {
+        res.StatusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(items);
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+
+itemRouter.get('/latest', cors.corsWithOptions, (req, res, next) => {
+    // res.end('Will send all the dishes to you');
+    Items.find({}).sort({'createdAt': 'desc'}).limit(4)   
+    .then((items) => {
+        res.StatusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(items);
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+
+itemRouter.get('/all', cors.corsWithOptions, (req, res, next) => {
+    // res.end('Will send all the dishes to you');
+    Items.find({}).sort({'createdAt': 'desc'})
     .then((items) => {
         res.StatusCode = 200;
         res.setHeader('Content-Type', 'application/json');
@@ -140,5 +162,41 @@ itemRouter.get('/:itemId', cors.corsWithOptions, (req, res, next) => {
     }, (err) => next(err))
     .catch((err) => next(err));
 })
+
+itemRouter.delete('/:itemId', cors.corsWithOptions, (req, res, next) => {
+    // res.end('Will send all the dishes to you');
+    Items.findByIdAndRemove(req.params.itemId)
+    .then((items) => {
+        res.StatusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(items);
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+
+itemRouter.get('/email/:email', cors.corsWithOptions, (req, res, next) => {
+    // res.end('Will send all the dishes to you');
+    Items.find({"SellerEmail":req.params.email})
+    .then((items) => {
+        res.StatusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(items);
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+
+
+itemRouter.get('/name/:keyword', cors.corsWithOptions, (req, res, next) => {
+    // res.end('Will send all the dishes to you');
+    Items.find({"ItemName":{ "$regex": req.params.keyword, "$options": "i" }})
+    .then((items) => {
+        res.StatusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(items);
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+
+
 
 module.exports = itemRouter;
