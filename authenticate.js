@@ -23,9 +23,13 @@ opts.secretOrKey = config.secretKey;
             if (err) {
                 return done(err, false);
             }
+            else if (!user.emailValidation) {
+                return done(null, false);
+            }
             else if (user) {
                 return done(null, user);
             }
+            
             else {
                 return done(null, false);
             }
