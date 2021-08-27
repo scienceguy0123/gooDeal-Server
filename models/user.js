@@ -9,6 +9,11 @@ const User = new Schema({
         unique:true
     },
 
+    // emailValidation: {
+    //     type: Boolean,
+    //     default:false
+    // },
+
     admin: {
         type: Boolean,
         default:false
