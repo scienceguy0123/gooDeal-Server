@@ -10,6 +10,8 @@ const cors = require('./cors');
 const user_control = require('../controllers/user_controller');
 const nodemailer = require('nodemailer');
 const config = require('../config');
+const jwt = require('jsonwebtoken');
+
 
 
 const transporter = nodemailer.createTransport(({
@@ -46,7 +48,7 @@ userRouter.post('/register', cors.corsWithOptions, (req, res, next) => {
     
     const verificationToken = user.generateVerificationToken();
     
-    const url = `http://localhost:3000/users/verify/${verificationToken}`;
+    const url = `https://localhost:3444/users/verify/${verificationToken}`;
 
     transporter.sendMail({
       from:config.EMAIL_USERNAME,
@@ -77,18 +79,18 @@ userRouter.post('/login', cors.corsWithOptions, (req, res, next) => {
       return next(err);
     } 
     //user can't be found, or user and password incorrect
-    if(!user){
+    else if(!user){
       res.statusCode = 401;
       res.setHeader('Content-Type', 'application/json');
-      res.json({success: false, status: 'Login Failed', err:info});
+      res.json({success: false, status: 'Invalid username or password', err:info});
     }
 
-    if(!user.emailValidation){
+    else if(!user.emailValidation){
       res.statusCoude = 403;
       res.setHeader('Content-Type', 'application/json');
       res.json({success: false, status: 'Email needs to be verified first', err:info});
     }
-    
+    else{
     req.logIn(user, (err) => {
       if (err) {
         res.statusCode = 401;
@@ -101,45 +103,86 @@ userRouter.post('/login', cors.corsWithOptions, (req, res, next) => {
     res.setHeader('Content-Type', 'application/json');
     res.json({user, success: true, status: 'Login', token:token});
     });
+  }
   }) (req, res, next);
 });
 
-userRouter.get('/verify/:token', cors.corsWithOptions, (req, res, next) => {
+userRouter.get('/verify/:token', cors.corsWithOptions, async (req, res) => {
   const { token } = req.params
-  
+  // Check we have an id
   if (!token) {
-    return res.status(422).send({ 
-         message: "Missing Token" 
-    });
+      return res.status(422).send({ 
+           message: "Missing Token" 
+      });
   }
-
+  // Step 1 -  Verify the token from the URL
   let payload = null
-  
-  jwt.verify(token, config.USER_VERIFICATION_TOKEN_SECRET, (err, decoded) => {
-    if (err) {
-      res.StatusCode = 500;
-      res.setHeader('Content-Type', 'application/json');
-      res.json({err: err});
-    }
-    else{
-      Users.findOne({_id:decoded.ID}).exec()
-      .then((user) => {
-        user.emailValidation = true;
-        user.save((err, result) => {
-          if (err) {
-            return res.status(500).send(err);
-          }
-          return res.status(200).send({
+  try {
+      payload = jwt.verify(
+         token,
+         config.USER_EMAIL_VERIFICATION_TOKEN_SECRET
+      );
+  } catch (err) {
+      return res.status(404).send(err);
+  }
+  try{
+      // Step 2 - Find user with matching ID
+      const user = await Users.findOne({ _id: payload.ID }).exec();
+      if (!user) {
+         return res.status(404).send({ 
+            message: "User does not  exists" 
+         });
+      }
+      // Step 3 - Update user verification status to true
+      user.emailValidation = true;
+      await user.save();
+      return res.status(200).send({
             message: "Account Verified"
-          });
-        })
-      }, (err) => {
-        return res.status(404).send({ 
-          message: "User does not  exists" 
-       });
-      } )
-    }
-  });
-})
+      });
+   } catch (err) {
+      return res.status(500).send(err);
+   }
+  }
+)
+
+// (req, res, next) => {
+//   const { token } = req.params
+  
+//   if (!token) {
+//     return res.status(422).send({ 
+//          message: "Missing Token" 
+//     });
+//   }
+
+//   let payload = null
+  
+//   jwt.verify(token, config.USER_EMAIL_VERIFICATION_TOKEN_SECRET, (err, decoded) => {
+//     if (err) {
+//       res.StatusCode = 500;
+//       res.setHeader('Content-Type', 'application/json');
+//       res.json('here');
+//     }
+//     else{
+//       Users.findOne({_id:decoded.ID}).exec()
+//       .then((user) => {
+//         user.emailValidation = true;
+//         user.save((err, result) => {
+//           if (err) {
+//             return res.status(500).send(err);
+//           }
+//           return res.status(200).send({
+//             message: "Account Verified"
+//           });
+//         })
+//       }, (err) => {
+//         return res.status(404).send({ 
+//           message: "User does not  exists" 
+//        });
+//       } )
+//     }
+//   });
+// }
+
+
 
 module.exports = userRouter;

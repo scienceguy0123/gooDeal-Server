@@ -30,7 +30,7 @@ User.methods.generateVerificationToken = function () {
     const verificationToken = jwt.sign(
         { ID: user._id },
         config.USER_EMAIL_VERIFICATION_TOKEN_SECRET,
-        { expiresIn: "7d" }
+        { expiresIn: "1d" }
     );
     return verificationToken;
 };
