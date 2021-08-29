@@ -8,6 +8,7 @@ const passport = require('passport');
 const authenticate = require('./authenticate');
 var config = require('./config');
 var bodyParser = require('body-parser')
+const { MongoClient } = require('mongodb');
 
 
 
@@ -25,6 +26,10 @@ connect.then((db) => {
   console.log("connected correctly to db server");
 }, (err) => {console.log(err);})
 
+// const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
+// client.connect(err => {
+//   console.log(err);
+// });
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -35,14 +40,14 @@ var app = express();
 app.use(bodyParser.json({ limit: '50mb' }))
 
 // Secure traffic only
-app.all('*', (req, res, next) => {
-  if (req.secure) {
-    return next();
-  }
-  else {
-    res.redirect(307, 'https://' + req.hostname + ':' + app.get('secPort') + req.url);
-  }
-});
+// app.all('*', (req, res, next) => {
+//   if (req.secure) {
+//     return next();
+//   }
+//   else {
+//     res.redirect(307, 'https://' + req.hostname + ':' + app.get('secPort') + req.url);
+//   }
+// });
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -59,11 +64,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/items', itemsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/items', itemsRouter);
 // app.use('/imageUpload', imageUploadRouter);
 
-app.use('/item', itemRouter);
+app.use('/api/item', itemRouter);
 
 
 
