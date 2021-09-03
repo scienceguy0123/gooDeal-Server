@@ -21,7 +21,7 @@ const transporter = nodemailer.createTransport(({
   // tls: {
   //    ciphers:'SSLv3'
   // },
-  service: "Outlook365",
+  service: "gmail",
   auth: {
       user: config.EMAIL_USERNAME,
       pass: config.EMAIL_PASSWORD,
@@ -48,7 +48,7 @@ userRouter.post('/register', cors.corsWithOptions, (req, res, next) => {
     
     const verificationToken = user.generateVerificationToken();
     
-    const url = `https://localhost:3444/users/verify/${verificationToken}`;
+    const url = `http://localhost:5000/api/users/verify/${verificationToken}`;
 
     transporter.sendMail({
       from:config.EMAIL_USERNAME,

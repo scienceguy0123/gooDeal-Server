@@ -15,6 +15,21 @@ const { MongoClient } = require('mongodb');
 
 
 const url = config.mongoUrl;
+// const client = new MongoClient(url);
+
+// async function run() {
+//   try {
+//       await client.connect();
+//       console.log("Connected correctly to server");
+//   } catch (err) {
+//       console.log(err.stack);
+//   }
+//   finally {
+//       await client.close();
+//   }
+// }
+// run().catch(console.dir);
+
 const connect = mongoose.connect(url, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -37,7 +52,6 @@ let itemsRouter = require('./routes/items');
 let itemRouter = require('./routes/item');
 
 var app = express();
-app.use(bodyParser.json({ limit: '50mb' }))
 
 // Secure traffic only
 // app.all('*', (req, res, next) => {
