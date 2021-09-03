@@ -88,7 +88,7 @@ userRouter.post('/login', cors.corsWithOptions, (req, res, next) => {
     else if(!user.emailValidation){
       res.statusCoude = 403;
       res.setHeader('Content-Type', 'application/json');
-      res.json({success: false, status: 'Email needs to be verified first', err:info});
+      res.json({success: false, status: 'Email needs to be verified first, please check the verification email, it could be in spam.', err:info});
     }
     else{
     req.logIn(user, (err) => {
