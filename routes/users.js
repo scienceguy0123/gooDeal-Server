@@ -22,6 +22,7 @@ const transporter = nodemailer.createTransport(({
   //    ciphers:'SSLv3'
   // },
   service: "gmail",
+  name: "gmail.com",
   auth: {
       user: config.EMAIL_USERNAME,
       pass: config.EMAIL_PASSWORD,
@@ -48,13 +49,13 @@ userRouter.post('/register', cors.corsWithOptions, (req, res, next) => {
     
     const verificationToken = user.generateVerificationToken();
     
-    const url = `http://localhost:5000/api/users/verify/${verificationToken}`;
+    const url = `http://54.203.113.215:5000/api/users/verify/${verificationToken}`;
 
     transporter.sendMail({
       from:config.EMAIL_USERNAME,
       to: req.body.username,
       subject: 'Verify Account',
-      html: `Click <a href = '${url}'>here</a> to confirm your email.`
+      text: `${url}`
     }, (err, info) => {
       if(err) {
         res.status(400).json({err:err});
