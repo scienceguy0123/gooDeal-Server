@@ -12,24 +12,6 @@ const { MongoClient } = require('mongodb');
 
 
 
-
-
-const url = config.mongoUrl;
-
-
-const connect = mongoose.connect(url, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true,
-  useFindAndModify: false
-});
-
-connect.then((db) => {
-  console.log("connected correctly to db server");
-}, (err) => {console.log(err);})
-
-
-
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 let itemsRouter = require('./routes/items');
@@ -57,6 +39,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Set CORS header
+app.use((req, res, next) => {
+  res.setHeader("Access-control-Allow-Origin", "*")
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE")
+  // Allow client to set headers with Content-Type
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type")
+  next()
+})
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -64,16 +54,10 @@ app.use(passport.session());
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/items', itemsRouter);
-// app.use('/imageUpload', imageUploadRouter);
 
 app.use('/api/item', itemRouter);
 
 
-app.use(express.static(__dirname)); //here is important thing - no static directory, because all static :)
-
-app.get("/*", function(req, res) {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
 
 // function auth (req, res, next) {
 //   console.log(req.user);
@@ -108,5 +92,24 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+const url = config.mongoUrl;
+
+
+mongoose.connect(url, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false
+})
+.then(result => {
+  console.log('connected to mongo db atlas correctly')
+  const port = process.env.PORT || 5000
+  app.listen(port, () => {
+    console.log(`Listening on port ${port}...`)
+  })
+})
+.catch(err => {
+  console.log(err)
+})
 
 module.exports = app;

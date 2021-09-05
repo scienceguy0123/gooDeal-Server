@@ -4,7 +4,7 @@ const app = express();
 var bodyParser = require('body-parser')
 
 
-const whitelist = ['http://localhost:3000', 'https://localhost:3444', 'http://54.189.163.48', 'http://localhost:5000'];
+const whitelist = ['http://localhost:3000', 'https://localhost:3444', 'http://54.203.113.215/', 'http://localhost:5000'];
 var corsOptionsDelegate = (req, callback) => {
     var corsOptions;
     console.log(req.header('Origin'));

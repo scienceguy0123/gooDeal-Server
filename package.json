@@ -3,9 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "homepage": ".",
-
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node app.js",
+    "server": "nodemon app.js",
+    "install-client": "npm i --prefix front-end", 
+    "client": "npm start --prefix front-end", 
+    "dev": "concurrently \"npm run server\" \"npm run client\"" 
   },
   "dependencies": {
     "body-parser": "^1.19.0",
@@ -28,5 +31,8 @@
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^6.1.0",
     "pug": "^3.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
   }
 }
