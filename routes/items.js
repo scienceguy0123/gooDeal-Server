@@ -31,15 +31,24 @@ itemRouter.get('/', cors.corsWithOptions, authenticate.verifyUser, (req, res, ne
     .catch((err) => next(err));
 })
 
-itemRouter.get('/latest', cors.corsWithOptions, (req, res, next) => {
+itemRouter.get('/latest', cors.corsWithOptions, async(req, res) => {
     // res.end('Will send all the dishes to you');
-    Items.find({}).sort({'createdAt': 'desc'}).limit(4)   
-    .then((items) => {
-        res.StatusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json(items);
-    }, (err) => next(err))
-    .catch((err) => next(err));
+    try{
+    let items = await Items.find({}).sort({'createdAt': 'desc'}).limit(4);
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.json(items);
+    } catch(err) {
+        next(err);
+    }
+
+    // .then((items) => {
+    //     res.StatusCode = 200;
+    //     res.setHeader('Content-Type', 'application/json');
+    //     res.json(items);
+    // }, (err) => next(err))
+    // .catch((err) => next(err));
+    
 })
 
 itemRouter.get('/all', cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {

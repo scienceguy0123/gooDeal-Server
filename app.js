@@ -15,20 +15,7 @@ const { MongoClient } = require('mongodb');
 
 
 const url = config.mongoUrl;
-// const client = new MongoClient(url);
 
-// async function run() {
-//   try {
-//       await client.connect();
-//       console.log("Connected correctly to server");
-//   } catch (err) {
-//       console.log(err.stack);
-//   }
-//   finally {
-//       await client.close();
-//   }
-// }
-// run().catch(console.dir);
 
 const connect = mongoose.connect(url, {
   useNewUrlParser: true,
@@ -41,10 +28,7 @@ connect.then((db) => {
   console.log("connected correctly to db server");
 }, (err) => {console.log(err);})
 
-// const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
-// client.connect(err => {
-//   console.log(err);
-// });
+
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -85,7 +69,11 @@ app.use('/api/items', itemsRouter);
 app.use('/api/item', itemRouter);
 
 
+app.use(express.static(__dirname)); //here is important thing - no static directory, because all static :)
 
+app.get("/*", function(req, res) {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
 
 // function auth (req, res, next) {
 //   console.log(req.user);
@@ -101,6 +89,8 @@ app.use('/api/item', itemRouter);
 // }
 
 // app.use(auth)
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
